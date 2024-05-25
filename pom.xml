@@ -101,6 +101,12 @@
 			<version>6.5.0.Final</version>
 			<type>pom</type>
 		</dependency>
+		<dependency>
+			<groupId>nz.net.ultraq.thymeleaf</groupId>
+			<artifactId>thymeleaf-layout-dialect</artifactId>
+			<version>3.3.0</version>
+		</dependency>
+
 
 	</dependencies>
 

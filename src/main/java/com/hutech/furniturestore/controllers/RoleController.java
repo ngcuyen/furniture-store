@@ -3,6 +3,7 @@ package com.hutech.furniturestore.controllers;
 import com.hutech.furniturestore.constants.ApiResponse;
 import com.hutech.furniturestore.dtos.RoleDto;
 import com.hutech.furniturestore.exceptions.NoSuchElementFoundException;
+import com.hutech.furniturestore.models.Role;
 import com.hutech.furniturestore.sevices.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -182,7 +183,10 @@ public class RoleController {
                     LocalDateTime.now().format(formatter),
                     null
             );
-
+            Role newRole = new Role();
+            newRole.setName(roleDto.getName());
+            newRole.setDescription(roleDto.getDescription());
+            roleService.saveRole(newRole);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (Exception ex) {
             // Catch any unexpected exceptions and return a 500 status code

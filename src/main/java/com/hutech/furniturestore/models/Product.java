@@ -34,10 +34,10 @@ public class Product extends BaseEntity{
     private Integer sold;
 
     @Column(name = "is_available")
-    private boolean isAvailable;
+    private Boolean isAvailable;
 
     @Column(name = "is_best_seller")
-    private boolean isBestSeller = false;
+    private Boolean isBestSeller = false;
 
     @Column(name = "is_removed")
     private Boolean isRemoved = false;

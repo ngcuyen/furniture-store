@@ -13,10 +13,13 @@ public class ProductDto {
         private String imageUrl;
         private String description;
         private String stockQuantity;
+        private String thumbnail;
         private String categoryId;
-        private boolean isDelete = false;
-        private boolean isAvailable = true;
-        private boolean bestSeller = false;
+        private Integer quantity;
+        private Boolean isRemoved = false;
+        private Boolean isBestSeller = false;
+        private Double price;
+        private Boolean isAvailable = true;
     }
 
     @Data

@@ -4,24 +4,21 @@ import com.hutech.furniturestore.constants.ApiResponse;
 import com.hutech.furniturestore.constants.PaginationResponse;
 import com.hutech.furniturestore.constants.ProductResponse;
 import com.hutech.furniturestore.constants.RoleResponse;
-import com.hutech.furniturestore.models.Product;
+import com.hutech.furniturestore.dtos.ProductDto.*;
 import com.hutech.furniturestore.sevices.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/products")
@@ -126,6 +123,89 @@ public class ProductController {
                     null,
                     LocalDateTime.now().format(formatter),
                     null
+            );
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    /**
+     * Description: Allows the creation of a new product in the catalog.
+     * Purpose: Create a new product
+     * Path: /api/v1/products
+     * Method: POST
+     * Header: { Authorization: Bearer <access_token> }
+     * Body: { name: String, description: String }
+     */
+    @PostMapping
+    @Operation(
+            summary = "Create a new product",
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "201",
+                            description = "Product created successfully",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiResponse.class),
+                                    examples = @ExampleObject(
+                                            value = "{ \"statusCode\": 201, \"message\": \"Role created successfully\", \"data\": { \"name\": \"Admin\", \"description\": \"Administrator role\" }, \"dateTime\": \"01-01-2023T12:00:00.000\", \"messageConstants\": null }"
+                                    )
+                            )
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiResponse.class),
+                                    examples = @ExampleObject(
+                                            value = "{ \"statusCode\": 401, \"message\": \"Unauthorized access\", \"data\": null, \"dateTime\": \"01-01-2023T12:00:00.000\", \"messageConstants\": null}"
+                                    )
+                            )
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "403",
+                            description = "Forbidden",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiResponse.class),
+                                    examples = @ExampleObject(
+                                            value = "{ \"statusCode\": 403, \"message\": \"Access forbidden\", \"data\": null, \"dateTime\": \"01-01-2023T12:00:00.000\", \"messageConstants\": null }"
+                                    )
+                            )
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiResponse.class),
+                                    examples = @ExampleObject(
+                                            value = "{ \"statusCode\": 500, \"message\": \"An unexpected error occurred\", \"data\": null, \"dateTime\": \"01-01-2024T12:00:00.000\", \"messageConstants\": null }"
+                                    )
+                            )
+                    )
+            }
+    )
+    public ResponseEntity<ApiResponse<ProductResponse>> createRole(@Valid @RequestBody CreateProductDto createProductDto) {
+        try {
+            ProductResponse productResponse = productService.createProduct(createProductDto);
+            ApiResponse<ProductResponse> response = new ApiResponse<>(
+                    HttpStatus.CREATED.value(),
+                    "Product created successfully",
+                    productResponse,
+                    LocalDateTime.now().format(formatter),
+                    null
+            );
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (Exception ex) {
+            // Catch any unexpected exceptions and return a 500 status code
+            ApiResponse<ProductResponse> response = new ApiResponse<>(
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "An unexpected error occurred",
+                    null,
+                    LocalDateTime.now().format(formatter),
+                    "System error"
             );
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }

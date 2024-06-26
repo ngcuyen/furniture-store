@@ -3,6 +3,7 @@ package com.hutech.furniturestore.sevices;
 import com.hutech.furniturestore.constants.PaginationResponse;
 import com.hutech.furniturestore.constants.ProductResponse;
 import com.hutech.furniturestore.constants.RoleResponse;
+import com.hutech.furniturestore.dtos.ProductDto.*;
 import com.hutech.furniturestore.models.Product;
 import com.hutech.furniturestore.models.Role;
 import com.hutech.furniturestore.repositories.ProductRepository;
@@ -24,7 +25,23 @@ import java.util.stream.Collectors;
 public class ProductService {
     private final ProductRepository productRepository;
 
-    public Product createNewProduct(Product product) {return productRepository.save(product);}
+    public ProductResponse createProduct(CreateProductDto productRequest) {
+        Product product = new Product();
+        product.setName(productRequest.getName());
+        product.setDescription(productRequest.getDescription());
+        product.setPrice(productRequest.getPrice());
+        product.setThumbnail(productRequest.getThumbnail());
+        product.setIsRemoved(productRequest.getIsRemoved());
+        product.setQuantity(productRequest.getQuantity());
+        product.setIsAvailable(productRequest.getIsAvailable());
+        product.setIsBestSeller(productRequest.getIsBestSeller());
+        Product savedProduct = productRepository.save(product);
+        ProductResponse productResponse = new ProductResponse();
+        productResponse.setId(savedProduct.getId());
+        productResponse.setName(savedProduct.getName());
+        productResponse.setDescription(savedProduct.getDescription());
+        return productResponse;
+    }
 
     public Optional<Product> getProductById(Long id) {return productRepository.findById(id);}
 

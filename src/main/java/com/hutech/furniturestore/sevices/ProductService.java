@@ -2,10 +2,11 @@ package com.hutech.furniturestore.sevices;
 
 import com.hutech.furniturestore.constants.PaginationResponse;
 import com.hutech.furniturestore.constants.ProductResponse;
-import com.hutech.furniturestore.constants.RoleResponse;
 import com.hutech.furniturestore.dtos.ProductDto.*;
+import com.hutech.furniturestore.exceptions.NoSuchElementFoundException;
+import com.hutech.furniturestore.models.Category;
 import com.hutech.furniturestore.models.Product;
-import com.hutech.furniturestore.models.Role;
+import com.hutech.furniturestore.repositories.CategoryRepository;
 import com.hutech.furniturestore.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class ProductService {
     private final ProductRepository productRepository;
+    private  final CategoryRepository categoryRepository;
 
     public ProductResponse createProduct(CreateProductDto productRequest) {
         Product product = new Product();
@@ -35,6 +37,11 @@ public class ProductService {
         product.setQuantity(productRequest.getQuantity());
         product.setIsAvailable(productRequest.getIsAvailable());
         product.setIsBestSeller(productRequest.getIsBestSeller());
+
+        Category category = categoryRepository.findById(productRequest.getCategoryId())
+                .orElseThrow(() -> new NoSuchElementFoundException("Category not found with id: " + productRequest.getCategoryId()));
+        product.setCategory(category);
+
         Product savedProduct = productRepository.save(product);
         ProductResponse productResponse = new ProductResponse();
         productResponse.setId(savedProduct.getId());

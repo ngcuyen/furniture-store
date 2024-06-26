@@ -39,4 +39,7 @@ public class ProductResponse {
 
     @Schema(description = "The price of the product")
     private Boolean isRemoved = false;
+
+    @Schema(description = "The category id of the product")
+    private Long categoryId;
 }

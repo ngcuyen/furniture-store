@@ -14,7 +14,7 @@ public class ProductDto {
         private String description;
         private String stockQuantity;
         private String thumbnail;
-        private String categoryId;
+        private Long categoryId;
         private Integer quantity;
         private Boolean isRemoved = false;
         private Boolean isBestSeller = false;

@@ -1,7 +1,6 @@
 package com.hutech.furniturestore.constants;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -40,4 +39,7 @@ public class ProductResponse {
 
     @Schema(description = "The price of the product")
     private Boolean isRemoved = false;
+
+    @Schema(description = "The category id of the product")
+    private Long categoryId;
 }

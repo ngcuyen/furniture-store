@@ -2,10 +2,12 @@ package com.hutech.furniturestore.sevices;
 
 import com.hutech.furniturestore.constants.PaginationResponse;
 import com.hutech.furniturestore.constants.ProductResponse;
+import com.hutech.furniturestore.constants.RoleResponse;
 import com.hutech.furniturestore.dtos.ProductDto.*;
 import com.hutech.furniturestore.exceptions.NoSuchElementFoundException;
 import com.hutech.furniturestore.models.Category;
 import com.hutech.furniturestore.models.Product;
+import com.hutech.furniturestore.models.Role;
 import com.hutech.furniturestore.repositories.CategoryRepository;
 import com.hutech.furniturestore.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +39,7 @@ public class ProductService {
         product.setQuantity(productRequest.getQuantity());
         product.setIsAvailable(productRequest.getIsAvailable());
         product.setIsBestSeller(productRequest.getIsBestSeller());
-
+        product.setSold(productRequest.getSold());
         Category category = categoryRepository.findById(productRequest.getCategoryId())
                 .orElseThrow(() -> new NoSuchElementFoundException("Category not found with id: " + productRequest.getCategoryId()));
         product.setCategory(category);
@@ -50,7 +52,27 @@ public class ProductService {
         return productResponse;
     }
 
-    public Optional<Product> getProductById(Long id) {return productRepository.findById(id);}
+
+    public ProductResponse getProductById(Long id) {
+        Optional<Product> productOpt = productRepository.findById(id);
+        if (productOpt.isPresent() && !productOpt.get().getIsRemoved()) {
+            Product product = productOpt.get();
+            ProductResponse productResponse = new ProductResponse();
+            productResponse.setId(product.getId());
+            productResponse.setName(product.getName());
+            productResponse.setDescription(product.getDescription());
+            productResponse.setPrice(product.getPrice());
+            productResponse.setThumbnail(product.getThumbnail());
+            productResponse.setIsBestSeller(product.getIsBestSeller());
+            productResponse.setIsAvailable(product.getIsAvailable());
+            productResponse.setSold(product.getSold());
+            productResponse.setCategoryId(product.getCategory().getId());
+            productResponse.setQuantity(product.getQuantity());
+            return productResponse;
+        } else {
+            throw new NoSuchElementFoundException("Role not found or has been removed with ID");
+        }
+    }
 
     public List<Product> getAll() {
         return productRepository.findAll();

@@ -5,6 +5,8 @@ import com.hutech.furniturestore.constants.PaginationResponse;
 import com.hutech.furniturestore.constants.ProductResponse;
 import com.hutech.furniturestore.constants.RoleResponse;
 import com.hutech.furniturestore.dtos.ProductDto.*;
+import com.hutech.furniturestore.dtos.RoleDto;
+import com.hutech.furniturestore.exceptions.NoSuchElementFoundException;
 import com.hutech.furniturestore.sevices.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -127,6 +129,108 @@ public class ProductController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+    /**
+     * Description: Retrieves the current product identified by product's id.
+     * Purpose: Get a product by id
+     * Path: /api/v1/products/:id
+     * Method: GET
+     * Params: { id: Long }
+     */
+    @GetMapping("/{id}")
+    @Operation(
+            summary = "Get a product by ID",
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "Product retrieved successfully",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiResponse.class),
+                                    examples = @ExampleObject(
+                                            value = "{ \"statusCode\": 200, \"message\": \"Product retrieved successfully\", \"data\": { \"name\": \"Admin\", \"description\": \"Administrator role\" }, \"dateTime\": \"01-01-2023T12:00:00.000\", \"messageConstants\": null }"
+                                    )
+                            )
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiResponse.class),
+                                    examples = @ExampleObject(
+                                            value = "{ \"statusCode\": 401, \"message\": \"Unauthorized access\", \"data\": null, \"dateTime\": \"01-01-2023T12:00:00.000\", \"messageConstants\": null }"
+                                    )
+                            )
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "403",
+                            description = "Forbidden",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiResponse.class),
+                                    examples = @ExampleObject(
+                                            value = "{ \"statusCode\": 403, \"message\": \"Access forbidden\", \"data\": null, \"dateTime\": \"01-01-2023T12:00:00.000\", \"messageConstants\": null }"
+                                    )
+                            )
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "404",
+                            description = "Role not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiResponse.class),
+                                    examples = @ExampleObject(
+                                            value = "{ \"statusCode\": 404, \"message\": \"Role not found\", \"data\": null, \"dateTime\": \"01-01-2023T12:00:00.000\", \"messageConstants\": null }"
+                                    )
+                            )
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiResponse.class),
+                                    examples = @ExampleObject(
+                                            value = "{ \"statusCode\": 500, \"message\": \"An unexpected error occurred\", \"data\": null, \"dateTime\": \"01-01-2023T12:00:00.000\", \"messageConstants\": null }"
+                                    )
+                            )
+                    )
+            }
+    )
+    public ResponseEntity<ApiResponse<ProductResponse>> getProductById(@PathVariable("id") Long id) {
+        try {
+            ProductResponse roleResponse = productService.getProductById(id);
+            ApiResponse<ProductResponse> response = new ApiResponse<>(
+                    HttpStatus.OK.value(),
+                    "Product retrieved successfully",
+                    roleResponse,
+                    LocalDateTime.now().format(formatter),
+                    null
+            );
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (NoSuchElementFoundException ex) {
+            ApiResponse<ProductResponse> response = new ApiResponse<>(
+                    HttpStatus.NOT_FOUND.value(),
+                    ex.getMessage(),
+                    null,
+                    LocalDateTime.now().format(formatter),
+                    null
+            );
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            ApiResponse<ProductResponse> response = new ApiResponse<>(
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "An unexpected error occurred",
+                    null,
+                    LocalDateTime.now().format(formatter),
+                    null
+            );
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 
     /**

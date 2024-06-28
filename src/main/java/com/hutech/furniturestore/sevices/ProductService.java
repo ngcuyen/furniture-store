@@ -2,13 +2,10 @@ package com.hutech.furniturestore.sevices;
 
 import com.hutech.furniturestore.constants.PaginationResponse;
 import com.hutech.furniturestore.constants.ProductResponse;
-import com.hutech.furniturestore.constants.RoleResponse;
 import com.hutech.furniturestore.dtos.ProductDto;
-import com.hutech.furniturestore.dtos.RoleDto;
 import com.hutech.furniturestore.exceptions.NoSuchElementFoundException;
 import com.hutech.furniturestore.models.Category;
 import com.hutech.furniturestore.models.Product;
-import com.hutech.furniturestore.models.Role;
 import com.hutech.furniturestore.repositories.CategoryRepository;
 import com.hutech.furniturestore.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -72,13 +69,10 @@ public class ProductService {
             productResponse.setQuantity(product.getQuantity());
             return productResponse;
         } else {
-            throw new NoSuchElementFoundException("Role not found or has been removed with ID");
+            throw new NoSuchElementFoundException("Product not found or has been removed with ID");
         }
     }
 
-    public List<Product> getAll() {
-        return productRepository.findAll();
-    }
 
     public void deleteProductById(Long id) {
         Optional<Product> productOpt = productRepository.findById(id);
@@ -114,7 +108,7 @@ public class ProductService {
             Product updatedProduct = productRepository.save(product);
             return convertToProductResponse(updatedProduct);
         } else {
-            throw new NoSuchElementFoundException("Role not found or has been removed with ID");
+            throw new NoSuchElementFoundException("Product not found or has been removed with ID");
         }
     }
 

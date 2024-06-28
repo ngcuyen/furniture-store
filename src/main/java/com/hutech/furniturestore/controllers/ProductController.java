@@ -3,10 +3,7 @@ package com.hutech.furniturestore.controllers;
 import com.hutech.furniturestore.constants.ApiResponse;
 import com.hutech.furniturestore.constants.PaginationResponse;
 import com.hutech.furniturestore.constants.ProductResponse;
-import com.hutech.furniturestore.constants.RoleResponse;
 import com.hutech.furniturestore.dtos.ProductDto;
-import com.hutech.furniturestore.dtos.ProductDto.*;
-import com.hutech.furniturestore.dtos.RoleDto;
 import com.hutech.furniturestore.exceptions.NoSuchElementFoundException;
 import com.hutech.furniturestore.sevices.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -382,7 +379,7 @@ public class ProductController {
             ProductResponse updatedProduct = productService.updateProduct(id, productUpdateRequest);
             ApiResponse<ProductResponse> response = new ApiResponse<>(
                     HttpStatus.OK.value(),
-                    "Role updated successfully",
+                    "Product updated successfully",
                     updatedProduct,
                     LocalDateTime.now().format(formatter),
                     null

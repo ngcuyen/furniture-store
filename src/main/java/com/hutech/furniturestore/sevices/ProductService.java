@@ -2,10 +2,13 @@ package com.hutech.furniturestore.sevices;
 
 import com.hutech.furniturestore.constants.PaginationResponse;
 import com.hutech.furniturestore.constants.ProductResponse;
-import com.hutech.furniturestore.dtos.ProductDto.*;
+import com.hutech.furniturestore.constants.RoleResponse;
+import com.hutech.furniturestore.dtos.ProductDto;
+import com.hutech.furniturestore.dtos.RoleDto;
 import com.hutech.furniturestore.exceptions.NoSuchElementFoundException;
 import com.hutech.furniturestore.models.Category;
 import com.hutech.furniturestore.models.Product;
+import com.hutech.furniturestore.models.Role;
 import com.hutech.furniturestore.repositories.CategoryRepository;
 import com.hutech.furniturestore.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,9 +29,9 @@ import java.util.stream.Collectors;
 @Transactional
 public class ProductService {
     private final ProductRepository productRepository;
-    private  final CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
-    public ProductResponse createProduct(CreateProductDto productRequest) {
+    public ProductResponse createProduct(ProductDto productRequest) {
         Product product = new Product();
         product.setName(productRequest.getName());
         product.setDescription(productRequest.getDescription());
@@ -37,7 +41,7 @@ public class ProductService {
         product.setQuantity(productRequest.getQuantity());
         product.setIsAvailable(productRequest.getIsAvailable());
         product.setIsBestSeller(productRequest.getIsBestSeller());
-
+        product.setSold(productRequest.getSold());
         Category category = categoryRepository.findById(productRequest.getCategoryId())
                 .orElseThrow(() -> new NoSuchElementFoundException("Category not found with id: " + productRequest.getCategoryId()));
         product.setCategory(category);
@@ -50,15 +54,69 @@ public class ProductService {
         return productResponse;
     }
 
-    public Optional<Product> getProductById(Long id) {return productRepository.findById(id);}
+
+    public ProductResponse getProductById(Long id) {
+        Optional<Product> productOpt = productRepository.findById(id);
+        if (productOpt.isPresent() && !productOpt.get().getIsRemoved()) {
+            Product product = productOpt.get();
+            ProductResponse productResponse = new ProductResponse();
+            productResponse.setId(product.getId());
+            productResponse.setName(product.getName());
+            productResponse.setDescription(product.getDescription());
+            productResponse.setPrice(product.getPrice());
+            productResponse.setThumbnail(product.getThumbnail());
+            productResponse.setIsBestSeller(product.getIsBestSeller());
+            productResponse.setIsAvailable(product.getIsAvailable());
+            productResponse.setSold(product.getSold());
+            productResponse.setCategoryId(product.getCategory().getId());
+            productResponse.setQuantity(product.getQuantity());
+            return productResponse;
+        } else {
+            throw new NoSuchElementFoundException("Role not found or has been removed with ID");
+        }
+    }
 
     public List<Product> getAll() {
         return productRepository.findAll();
     }
 
-    public void deleteProduct(Long id) {productRepository.deleteById(id);}
+    public void deleteProductById(Long id) {
+        Optional<Product> productOpt = productRepository.findById(id);
+        if (productRepository.existsById(id) && !productOpt.get().getIsRemoved()) {
+            Product product = productOpt.get();
+            product.setIsRemoved(true);
+            product.setUpdatedAt(LocalDateTime.now());
+            productRepository.save(product);
+        } else {
+            throw new NoSuchElementFoundException("Product not found or has been removed with ID");
+        }
+    }
 
-    public Optional<Product> updateProduct(Long id, Product product){return productRepository.findById(id);}
+    public ProductResponse updateProduct(Long id, ProductDto productUpdateRequest) {
+        Optional<Product> productOpt = productRepository.findById(id);
+        if (productOpt.isPresent() && !productOpt.get().getIsRemoved()) {
+            Product product = productOpt.get();
+            product.setName(productUpdateRequest.getName());
+            product.setDescription(productUpdateRequest.getDescription());
+            product.setPrice(productUpdateRequest.getPrice());
+            product.setThumbnail(productUpdateRequest.getThumbnail());
+            product.setIsBestSeller(productUpdateRequest.getIsBestSeller());
+            product.setIsAvailable(productUpdateRequest.getIsAvailable());
+            product.setSold(productUpdateRequest.getSold());
+            if (productUpdateRequest.getCategoryId() != null) {
+                Category category = categoryRepository.findById(productUpdateRequest.getCategoryId())
+                        .orElseThrow(() -> new NoSuchElementFoundException("Category not found with ID: " + productUpdateRequest.getCategoryId()));
+                product.setCategory(category);
+            }
+            product.setQuantity(productUpdateRequest.getQuantity());
+            product.setIsRemoved(productUpdateRequest.getIsRemoved());
+            product.setUpdatedAt(LocalDateTime.now());
+            Product updatedProduct = productRepository.save(product);
+            return convertToProductResponse(updatedProduct);
+        } else {
+            throw new NoSuchElementFoundException("Role not found or has been removed with ID");
+        }
+    }
 
     private ProductResponse convertToProductResponse(Product product) {
         ProductResponse productResponse = new ProductResponse();

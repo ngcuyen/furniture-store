@@ -107,26 +107,17 @@ public class ProductController {
             @RequestParam(defaultValue = "id") String sort_by,
             @RequestParam(defaultValue = "asc") String sort_order
     ) {
-        try {
+
             PaginationResponse<ProductResponse> productsPage = productService.getAllProductsPagination(page, size, sort_by, sort_order);
             ApiResponse<PaginationResponse<ProductResponse>> response = new ApiResponse<>(
                     HttpStatus.OK.value(),
-                    "Successfully retrieved all roles in database.",
+                    "Successfully retrieved all products in database.",
                     productsPage,
                     LocalDateTime.now().format(formatter),
                     null
             );
             return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception ex) {
-            ApiResponse<PaginationResponse<ProductResponse>> response = new ApiResponse<>(
-                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    "An unexpected error occurred",
-                    null,
-                    LocalDateTime.now().format(formatter),
-                    null
-            );
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
     }
 
 
@@ -218,15 +209,6 @@ public class ProductController {
                     null
             );
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        } catch (Exception ex) {
-            ApiResponse<ProductResponse> response = new ApiResponse<>(
-                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    "An unexpected error occurred",
-                    null,
-                    LocalDateTime.now().format(formatter),
-                    null
-            );
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -1,33 +1,25 @@
 package com.hutech.furniturestore.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
-import java.util.List;
 
-@Entity
-@Table(name = "roles")
+import java.util.Set;
+
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Role extends BaseEntity{
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@Entity
+public class Role {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    String name;
 
-    @Column(nullable = false)
-    private String  name;
+    String description;
 
-    @Column(name="description")
-    private String description;
-
-    @Column(name = "is_removed")
-    private Boolean isRemoved = false;
-
-    @OneToMany(mappedBy = "role")
-    private List<User> users;
+    @ManyToMany
+    Set<Permission> permissions;
 }

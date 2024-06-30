@@ -1,10 +1,9 @@
 package com.hutech.furniturestore.models;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Date;
 
 @Getter
 @Setter
@@ -13,9 +12,9 @@ import java.util.Date;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class Token {
+public class Permission {
     @Id
-    String id;
+    String name;
 
-    Date expiryTime;
+    String description;
 }

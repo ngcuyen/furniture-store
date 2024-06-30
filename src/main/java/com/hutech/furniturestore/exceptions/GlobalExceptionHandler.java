@@ -1,66 +1,77 @@
 package com.hutech.furniturestore.exceptions;
 
-import org.springframework.http.HttpStatus;
+import com.hutech.furniturestore.constants.ApiResponse;
+import jakarta.validation.ConstraintViolation;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
+import java.nio.file.AccessDeniedException;
 import java.util.Map;
+import java.util.Objects;
 
-@RestControllerAdvice
+@ControllerAdvice
 public class GlobalExceptionHandler {
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy'T'HH:mm:ss.SSS");
+    private static final String MIN_ATTRIBUTE = "min";
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> validationErrors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach(error -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            validationErrors.put(fieldName, errorMessage);
-        });
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Validation failed");
-        response.put("data", validationErrors);
-        response.put("dateTime", LocalDateTime.now().format(formatter));
-        response.put("messageConstants", "Validation errors occurred");
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(value = Exception.class)
+    ResponseEntity<ApiResponse> handlingRuntimeException(RuntimeException exception) {
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setStatusCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getStatusCode().value());
+        apiResponse.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
+        return ResponseEntity.badRequest().body(apiResponse);
     }
 
-    @ExceptionHandler(CustomException.class)
-    public ResponseEntity<Map<String, Object>> handleCustomExceptions(CustomException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", ex.getMessage());
-        response.put("data", null);
-        response.put("dateTime", LocalDateTime.now().format(formatter));
-        response.put("messageConstants", "A custom error occurred");
-        return new ResponseEntity<>(response, ex.getStatus());
+    @ExceptionHandler(value = ErrorException.class)
+    ResponseEntity<ApiResponse> handlingErrorException(ErrorException exception) {
+        ErrorCode errorCode = exception.getErrorCode();
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setStatusCode(errorCode.getStatusCode().value());
+        apiResponse.setMessage(errorCode.getMessage());
+        apiResponse.setDateTime(errorCode.getDateTime());
+        apiResponse.setMessageConstants(errorCode.getMessageConstants());
+        return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
     }
 
-    @ExceptionHandler(NoSuchElementFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleNoSuchElementFoundException(NoSuchElementFoundException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", ex.getMessage());
-        response.put("data", null);
-        response.put("dateTime", LocalDateTime.now().format(formatter));
-        response.put("messageConstants", "Element not found");
-
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    @ExceptionHandler(value = AccessDeniedException.class)
+    ResponseEntity<ApiResponse> handlingAccessDeniedException(AccessDeniedException exception) {
+        ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
+        return ResponseEntity.status(errorCode.getStatusCode())
+                .body(ApiResponse.builder()
+                        .statusCode(errorCode.getStatusCode().value())
+                        .message(errorCode.getMessage())
+                        .dateTime(errorCode.getDateTime())
+                        .messageConstants(errorCode.getMessageConstants())
+                        .build());
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleAllExceptions(Exception ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "An unexpected error occurred");
-        response.put("data", null);
-        response.put("dateTime", LocalDateTime.now().format(formatter));
-        response.put("messageConstants", "System error");
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    ResponseEntity<ApiResponse> handlingValidation(MethodArgumentNotValidException exception) {
+        String enumKey = exception.getFieldError().getDefaultMessage();
+
+        ErrorCode errorCode = ErrorCode.INVALID_KEY;
+        Map<String, Object> attributes = null;
+        try {
+            errorCode = ErrorCode.valueOf(enumKey);
+            var constraintViolation =
+                    exception.getBindingResult().getAllErrors().getFirst().unwrap(ConstraintViolation.class);
+            attributes = constraintViolation.getConstraintDescriptor().getAttributes();
+        } catch (IllegalArgumentException e) {
+        }
+
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setStatusCode(errorCode.getStatusCode().value());
+        apiResponse.setMessage(
+                Objects.nonNull(attributes)
+                        ? mapAttribute(errorCode.getMessage(), attributes)
+                        : errorCode.getMessage());
+        apiResponse.setDateTime(errorCode.getDateTime());
+        return ResponseEntity.badRequest().body(apiResponse);
+    }
+
+    private String mapAttribute(String message, Map<String, Object> attributes) {
+        String minValue = String.valueOf(attributes.get(MIN_ATTRIBUTE));
+        return message.replace("{" + MIN_ATTRIBUTE + "}", minValue);
     }
 }

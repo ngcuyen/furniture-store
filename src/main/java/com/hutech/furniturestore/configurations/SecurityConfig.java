@@ -23,15 +23,17 @@ import org.springframework.web.filter.CorsFilter;
 @EnableMethodSecurity
 public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINTS = {
-            "/users/register", "/auth/login", "/auth/token/verify", "/uploads", "/products/pagination"
+            "/users/register", "/auth/login", "/auth/token/verify", "/uploads",
     };
 
-    private final String[] PROTECTED_ENDPOINTS = {
-            "/", "/", "/",
+    private final String[] PUBLIC_GET = {
+            "/products/pagination","/products/{id}",
+            "categories/pagination", "categories/{id}"
     };
+
 
     private final String[] PRIVATE_ENDPOINTS = {
-            "/users/pagination", "/users", "/users/{id}", "/products/{id}"
+            "/users/pagination", "/users", "/users/{id}", "/products/{id}","categories/{id}"
     };
 
     @Autowired
@@ -42,13 +44,14 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.GET, PUBLIC_GET).permitAll()
                         .requestMatchers(HttpMethod.GET, PRIVATE_ENDPOINTS)
                         .hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/users/{id}","/products/{id}")
+                        .requestMatchers(HttpMethod.PUT, "/users/{id}","/products/{id}", "categories/{id}")
                         .hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, PRIVATE_ENDPOINTS)
                         .hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/products").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/products","/categories").hasAuthority("ADMIN")
                         .anyRequest().authenticated());
 
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer

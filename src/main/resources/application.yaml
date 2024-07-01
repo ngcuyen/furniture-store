@@ -1,0 +1,20 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+
+spring:
+  datasource:
+    url: "jdbc:mysql://localhost:3306/furniture"
+    driverClassName: "com.mysql.cj.jdbc.Driver"
+    username: root
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+jwt:
+  signerKey: "e4d04b0b017c92b5172b3b550e3c043cf90e1391441ddb1bd761bace0e05aed3"
+  valid-duration: 3600 # in second
+  refreshable-duration: 604800 # in seconds

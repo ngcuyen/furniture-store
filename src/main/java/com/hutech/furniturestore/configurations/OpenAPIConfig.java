@@ -14,36 +14,36 @@ import java.util.List;
 @Configuration
 public class OpenAPIConfig {
 
-    @Value("${hutech.openapi.dev-url}")
-    private String devUrl;
-
-    @Value("${hutech.openapi.prod-url}")
-    private String prodUrl;
-
-    @Bean
-    public OpenAPI myOpenAPI() {
-        Server devServer = new Server();
-        devServer.setUrl(devUrl);
-        devServer.setDescription("Server URL in Development environment");
-
-        Server prodServer = new Server();
-        prodServer.setUrl(prodUrl);
-        prodServer.setDescription("Server URL in Production environment");
-
-        Contact contact = new Contact();
-        contact.setEmail("ngocuyenlepham@gmail.com");
-        contact.setName("NgocUyenLePham");
-        contact.setUrl("");
-
-        License mitLicense = new License().name("MIT License").url("https://choosealicense.com/licenses/mit/");
-
-        Info info = new Info()
-                .title("Demo Service API")
-                .version("1.0")
-                .contact(contact)
-                .description("This API exposes endpoints to manage demo.").termsOfService("https://www.pasanabeysekara.com")
-                .license(mitLicense);
-
-        return new OpenAPI().info(info).servers(List.of(devServer, prodServer));
-    }
+//    @Value("${hutech.openapi.dev-url}")
+//    private String devUrl;
+//
+//    @Value("${hutech.openapi.prod-url}")
+//    private String prodUrl;
+//
+//    @Bean
+//    public OpenAPI myOpenAPI() {
+//        Server devServer = new Server();
+//        devServer.setUrl(devUrl);
+//        devServer.setDescription("Server URL in Development environment");
+//
+//        Server prodServer = new Server();
+//        prodServer.setUrl(prodUrl);
+//        prodServer.setDescription("Server URL in Production environment");
+//
+//        Contact contact = new Contact();
+//        contact.setEmail("ngocuyenlepham@gmail.com");
+//        contact.setName("NgocUyenLePham");
+//        contact.setUrl("");
+//
+//        License mitLicense = new License().name("MIT License").url("https://choosealicense.com/licenses/mit/");
+//
+//        Info info = new Info()
+//                .title("Demo Service API")
+//                .version("1.0")
+//                .contact(contact)
+//                .description("This API exposes endpoints to manage demo.").termsOfService("https://www.pasanabeysekara.com")
+//                .license(mitLicense);
+//
+//        return new OpenAPI().info(info).servers(List.of(devServer, prodServer));
+//    }
 }

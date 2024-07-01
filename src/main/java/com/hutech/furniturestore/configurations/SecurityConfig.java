@@ -31,7 +31,7 @@ public class SecurityConfig {
     };
 
     private final String[] PRIVATE_ENDPOINTS = {
-            "/users/pagination", "/users", "/users/{id}"
+            "/users/pagination", "/users", "/users/{id}", "/products/{id}"
     };
 
     @Autowired
@@ -44,7 +44,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, PRIVATE_ENDPOINTS)
                         .hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/users/{id}")
+                        .requestMatchers(HttpMethod.PUT, "/users/{id}","/products/{id}")
                         .hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, PRIVATE_ENDPOINTS)
                         .hasAuthority("ADMIN")

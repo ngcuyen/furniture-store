@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -22,7 +23,11 @@ import org.springframework.web.filter.CorsFilter;
 @EnableMethodSecurity
 public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINTS = {
-            "/users/register", "/auth/login", "/auth/token/verify"
+            "/users/register", "/auth/login", "/auth/token/verify", "/uploads", "/products/pagination"
+    };
+
+    private final String[] PROTECTED_ENDPOINTS = {
+            "/", "/", "/",
     };
 
     private final String[] PRIVATE_ENDPOINTS = {
@@ -36,12 +41,14 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, PRIVATE_ENDPOINTS)
                         .hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/users/{id}")
                         .hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, PRIVATE_ENDPOINTS)
                         .hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/products").hasAuthority("ADMIN")
                         .anyRequest().authenticated());
 
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
@@ -50,6 +57,9 @@ public class SecurityConfig {
                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
 
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
+
+        // Set session management to stateless
+        httpSecurity.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return httpSecurity.build();
     }
 

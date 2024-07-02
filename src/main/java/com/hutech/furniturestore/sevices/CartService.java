@@ -96,11 +96,14 @@ public class CartService {
     }
 
     private CartResponse convertToCartResponse(CartItem cartItem) {
-        return new CartResponse(
-                cartItem.getProduct().getId(),
-                cartItem.getProduct().getName(),
-                cartItem.getProduct().getPrice(),
-                cartItem.getQuantity()
-        );
+        Product product = cartItem.getProduct();
+        CartResponse response = new CartResponse();
+        response.setProductId(product.getId());
+        response.setProductName(product.getName());
+        response.setProductPrice(product.getPrice());
+        response.setQuantity(cartItem.getQuantity());
+        response.setThumbnail(product.getThumbnail()); // Assuming thumbnail is a field in Product entity
+
+        return response;
     }
 }

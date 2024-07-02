@@ -5,6 +5,8 @@ import com.hutech.furniturestore.constants.OrderResponse;
 import com.hutech.furniturestore.constants.PaginationResponse;
 import com.hutech.furniturestore.dtos.request.OrderDto;
 import com.hutech.furniturestore.sevices.OrderService;
+import com.hutech.furniturestore.sevices.VNPayService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/orders")
@@ -22,9 +25,29 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private VNPayService vnPayService;
+
     @PostMapping
     public ResponseEntity<ApiResponse<OrderResponse>> createOrder(@Valid @RequestBody OrderDto orderDto) {
         OrderResponse orderResponse = orderService.createOrder(orderDto);
+
+        // Tính toán tổng số tiền từ OrderDto
+        double totalAmount = orderResponse.getTotalPrice();
+
+        // Thông tin đơn hàng
+        String orderInfo = "Thông tin đơn hàng";
+        String urlReturn = "http://localhost:8080/";
+
+        // Tạo URL thanh toán VNPay
+        String paymentUrl = vnPayService.createOrderVNPay((int) (totalAmount*100), orderInfo, urlReturn);
+
+        // Lưu URL thanh toán vào đơn hàng
+        orderService.updateOrderPaymentUrl(orderResponse.getId(), paymentUrl);
+
+        // Thêm URL thanh toán vào phản hồi
+        orderResponse.setPaymentUrl(paymentUrl);
+
         ApiResponse<OrderResponse> response = new ApiResponse<>(
                 HttpStatus.CREATED.value(),
                 "Order created successfully",
@@ -35,6 +58,17 @@ public class OrderController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    private int calculateTotalAmount(OrderDto orderDto) {
+        return orderDto.getCartItems().stream()
+                .mapToInt(cartItem -> cartItem.getQuantity() * getProductPrice(cartItem.getProductId()))
+                .sum();
+    }
+
+    private int getProductPrice(Long productId) {
+        // Lấy giá sản phẩm từ productId, đây chỉ là ví dụ
+        return 100000;
+    }
+
     @GetMapping("/pagination")
     public ResponseEntity<PaginationResponse<OrderResponse>> getAllOrders(
             @RequestParam(defaultValue = "1") int page,
@@ -43,5 +77,23 @@ public class OrderController {
             @RequestParam(defaultValue = "DESC") String sortOrder) {
         PaginationResponse<OrderResponse> response = orderService.getAllOrdersPagination(page, size, sortBy, sortOrder);
         return ResponseEntity.ok(response);
+    }
+
+    // Endpoint để nhận kết quả từ VNPay sau thanh toán
+    @PostMapping("/payment/result")
+    public ResponseEntity<String> receivePaymentResult(@RequestParam Map<String, String> callbackParams) {
+        if (vnPayService.isValidCallback(callbackParams)) {
+            Long orderId = Long.valueOf(callbackParams.get("orderId"));
+            boolean paymentSuccessful = "success".equals(callbackParams.get("status"));
+            orderService.processPaymentResult(orderId, paymentSuccessful);
+
+            if (paymentSuccessful) {
+                return ResponseEntity.ok("Payment successful");
+            } else {
+                return ResponseEntity.ok("Payment failed");
+            }
+        } else {
+            return ResponseEntity.ok("Invalid callback");
+        }
     }
 }

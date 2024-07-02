@@ -6,10 +6,7 @@ import com.hutech.furniturestore.constants.PaginationResponse;
 import com.hutech.furniturestore.dtos.request.OrderDetailDto;
 import com.hutech.furniturestore.dtos.request.OrderDto;
 import com.hutech.furniturestore.dtos.request.cart.CartItemDto;
-import com.hutech.furniturestore.models.Order;
-import com.hutech.furniturestore.models.OrderDetail;
-import com.hutech.furniturestore.models.Product;
-import com.hutech.furniturestore.models.User;
+import com.hutech.furniturestore.models.*;
 import com.hutech.furniturestore.repositories.OrderDetailRepository;
 import com.hutech.furniturestore.repositories.OrderRepository;
 import com.hutech.furniturestore.repositories.ProductRepository;
@@ -26,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -65,7 +63,7 @@ public class OrderService {
         order.setNote(orderDto.getNote());
         order.setPaymentMethod(orderDto.getPaymentMethod());
         order.setOrderDate(LocalDateTime.now());
-        order.setStatus("Pending");
+        order.setStatus(OrderStatus.PENDING);
         order.setUser(currentUser);
 
         double totalOrderPrice = 0.0;
@@ -96,6 +94,35 @@ public class OrderService {
         cartService.clearCart(); // Clear the cart after order placement
 
         return convertToOrderResponse(order);
+    }
+
+    @Transactional
+    public void updateOrderPaymentUrl(Long orderId, String paymentUrl) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found: " + orderId));
+        order.setPaymentUrl(paymentUrl);
+        order.setStatus(OrderStatus.PURCHASED);
+        orderRepository.save(order);
+    }
+
+    public boolean isValidCallback(Map<String, String> callbackParams) {
+        String vnp_ResponseCode = callbackParams.get("vnp_ResponseCode");
+        return "00".equals(vnp_ResponseCode); // Kiểm tra mã phản hồi là thành công (00)
+    }
+
+    @Transactional
+    public void processPaymentResult(Long orderId, boolean paymentSuccessful) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found: " + orderId));
+
+        if (paymentSuccessful) {
+            order.setStatus("purchased");
+        } else {
+            order.setStatus("failed");
+            // Xử lý khi thanh toán thất bại (nếu cần)
+        }
+
+        orderRepository.save(order);
     }
 
     private OrderResponse convertToOrderResponse(Order order) {

@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -102,7 +101,7 @@ public class CartService {
         response.setProductName(product.getName());
         response.setProductPrice(product.getPrice());
         response.setQuantity(cartItem.getQuantity());
-        response.setThumbnail(product.getThumbnail()); // Assuming thumbnail is a field in Product entity
+        response.setThumbnail(product.getThumbnail());
 
         return response;
     }

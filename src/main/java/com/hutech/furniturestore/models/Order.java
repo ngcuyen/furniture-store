@@ -48,6 +48,8 @@ public class Order extends BaseEntity{
     @Column(name = "payment_method", length = 100)
     private String paymentMethod;
 
+    @Column(name = "payment_url", length = 512)
+    private String paymentUrl;
 
     @Column(name = "is_removed")
     private boolean isRemoved = false;

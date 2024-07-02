@@ -10,4 +10,6 @@ public class OrderStatus {
     public static final String DELIVERED = "delivered";
 
     public static final String CANCELLED = "cancelled";
+
+    public static final String PURCHASED = "purchased";
 }

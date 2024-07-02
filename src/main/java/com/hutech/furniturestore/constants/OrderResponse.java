@@ -25,4 +25,5 @@ public class OrderResponse {
     private String paymentMethod;
     private boolean isRemoved;
     private List<OrderDetailDto> orderDetails;
+    private String paymentUrl;
 }

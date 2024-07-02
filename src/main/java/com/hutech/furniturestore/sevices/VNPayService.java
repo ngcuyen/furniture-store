@@ -12,7 +12,13 @@ import java.util.*;
 
 @Service
 public class VNPayService {
-    public String createOrder_vnpay(int total, String orderInfor, String urlReturn){
+
+    public boolean isValidCallback(Map<String, String> callbackParams) {
+        String vnp_ResponseCode = callbackParams.get("vnp_ResponseCode");
+        return "00".equals(vnp_ResponseCode); // Kiểm tra mã phản hồi là thành công (00)
+    }
+
+    public String createOrderVNPay(int total, String orderInfor, String urlReturn){
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String vnp_TxnRef = VNPayConfig.getRandomNumber(8);

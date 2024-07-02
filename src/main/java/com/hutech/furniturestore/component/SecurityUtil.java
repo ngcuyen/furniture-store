@@ -26,6 +26,19 @@ public class SecurityUtil {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + currentPrincipalName));
     }
 
+    public String getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+            return null;
+        }
+
+        String currentPrincipalName = authentication.getName();
+        User user = userRepository.findByEmail(currentPrincipalName)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + currentPrincipalName));
+
+        return user.getId();
+    }
+
     private User findOrCreateUser(String userId, String username, String email) {
         return userRepository.findById(userId)
                 .orElseGet(() -> {

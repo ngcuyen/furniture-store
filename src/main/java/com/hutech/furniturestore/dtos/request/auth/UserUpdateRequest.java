@@ -1,4 +1,4 @@
-package com.hutech.furniturestore.dtos.request;
+package com.hutech.furniturestore.dtos.request.auth;
 
 import jakarta.validation.constraints.Pattern;
 import lombok.*;

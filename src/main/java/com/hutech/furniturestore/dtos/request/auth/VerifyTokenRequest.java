@@ -1,15 +1,13 @@
-package com.hutech.furniturestore.dtos.request;
+package com.hutech.furniturestore.dtos.request.auth;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PayloadJWT {
-    String id;
-    String username;
-    String email;
+public class VerifyTokenRequest {
+    String token;
 }

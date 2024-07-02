@@ -1,6 +1,6 @@
 package com.hutech.furniturestore.configurations;
 
-import com.hutech.furniturestore.dtos.request.VerifyTokenRequest;
+import com.hutech.furniturestore.dtos.request.auth.VerifyTokenRequest;
 import com.hutech.furniturestore.exceptions.ErrorCode;
 import com.hutech.furniturestore.exceptions.ErrorException;
 import com.hutech.furniturestore.sevices.AuthenticationService;

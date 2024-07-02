@@ -2,9 +2,9 @@ package com.hutech.furniturestore.sevices;
 
 import com.hutech.furniturestore.constants.PaginationResponse;
 import com.hutech.furniturestore.constants.PredefinedRole;
-import com.hutech.furniturestore.dtos.request.DeleteUsersDto;
-import com.hutech.furniturestore.dtos.request.UserSignInRequest;
-import com.hutech.furniturestore.dtos.request.UserUpdateRequest;
+import com.hutech.furniturestore.dtos.request.auth.DeleteUsersDto;
+import com.hutech.furniturestore.dtos.request.auth.UserSignInRequest;
+import com.hutech.furniturestore.dtos.request.auth.UserUpdateRequest;
 import com.hutech.furniturestore.dtos.response.user.UserResponse;
 import com.hutech.furniturestore.exceptions.ErrorCode;
 import com.hutech.furniturestore.exceptions.ErrorException;

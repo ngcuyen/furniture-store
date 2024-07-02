@@ -1,7 +1,7 @@
 package com.hutech.furniturestore.sevices;
 
-import com.hutech.furniturestore.dtos.request.UserLoginRequest;
-import com.hutech.furniturestore.dtos.request.VerifyTokenRequest;
+import com.hutech.furniturestore.dtos.request.auth.UserLoginRequest;
+import com.hutech.furniturestore.dtos.request.auth.VerifyTokenRequest;
 import com.hutech.furniturestore.dtos.response.user.UserLoginResponse;
 import com.hutech.furniturestore.dtos.response.user.VerifyTokenResponse;
 import com.hutech.furniturestore.exceptions.ErrorCode;

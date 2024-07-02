@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -50,9 +51,6 @@ public class Order extends BaseEntity{
     @Column(name = "shipping_date")
     private Date shippingDate;
 
-    @Column(name = "tracking_number", length = 100)
-    private String trackingNumber;
-
     @Column(name = "payment_method", length = 100)
     private String paymentMethod;
 
@@ -63,11 +61,6 @@ public class Order extends BaseEntity{
     @Column(name = "is_removed")
     private boolean isRemoved = false;
 
-    @ManyToOne()
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne()
-    @JoinColumn(name = "coupon_id")
-    private Coupon coupon;
+    @OneToMany(mappedBy = "order")
+    private List<OrderDetail> orderDetails;
 }

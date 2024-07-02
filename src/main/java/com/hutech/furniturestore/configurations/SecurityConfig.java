@@ -1,5 +1,6 @@
 package com.hutech.furniturestore.configurations;
 
+import com.hutech.furniturestore.component.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +24,7 @@ import org.springframework.web.filter.CorsFilter;
 @EnableMethodSecurity
 public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINTS = {
-            "/users/register", "/auth/login", "/auth/token/verify", "/uploads",
+            "/users/register", "/auth/login", "/auth/token/verify", "/uploads"
     };
 
     private final String[] PUBLIC_GET = {
@@ -44,6 +45,7 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.GET, "products/{id}","categories/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_GET).permitAll()
                         .requestMatchers(HttpMethod.GET, PRIVATE_ENDPOINTS)
                         .hasAuthority("ADMIN")
@@ -93,5 +95,10 @@ public class SecurityConfig {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
+    }
+
+    @Bean
+    public SecurityUtil securityUtil() {
+        return new SecurityUtil();
     }
 }

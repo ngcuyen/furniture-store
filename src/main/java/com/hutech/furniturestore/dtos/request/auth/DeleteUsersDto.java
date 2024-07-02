@@ -1,13 +1,15 @@
-package com.hutech.furniturestore.dtos.request;
+package com.hutech.furniturestore.dtos.request.auth;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RefreshRequest {
-    String token;
+public class DeleteUsersDto {
+    private List<String> userIds;
 }

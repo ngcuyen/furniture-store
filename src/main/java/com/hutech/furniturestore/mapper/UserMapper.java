@@ -1,7 +1,7 @@
 package com.hutech.furniturestore.mapper;
 
-import com.hutech.furniturestore.dtos.request.UserSignInRequest;
-import com.hutech.furniturestore.dtos.request.UserUpdateRequest;
+import com.hutech.furniturestore.dtos.request.auth.UserSignInRequest;
+import com.hutech.furniturestore.dtos.request.auth.UserUpdateRequest;
 import com.hutech.furniturestore.dtos.response.user.UserResponse;
 import com.hutech.furniturestore.models.User;
 import org.mapstruct.Mapper;

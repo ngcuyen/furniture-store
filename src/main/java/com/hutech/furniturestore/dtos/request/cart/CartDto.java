@@ -1,4 +1,4 @@
-package com.hutech.furniturestore.dtos.cart;
+package com.hutech.furniturestore.dtos.request.cart;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

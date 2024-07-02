@@ -1,4 +1,4 @@
-package com.hutech.furniturestore.dtos.request;
+package com.hutech.furniturestore.dtos.request.cart;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class VerifyTokenRequest {
-    String token;
+public class CartItemDto {
+    private Long productId;
+    private Integer quantity;
 }

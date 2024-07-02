@@ -1,28 +1,24 @@
 package com.hutech.furniturestore.controllers;
 
 import com.hutech.furniturestore.constants.ApiResponse;
-import com.hutech.furniturestore.dtos.request.UserLoginRequest;
-import com.hutech.furniturestore.dtos.request.VerifyTokenRequest;
+import com.hutech.furniturestore.dtos.request.auth.UserLoginRequest;
+import com.hutech.furniturestore.dtos.request.auth.VerifyTokenRequest;
 import com.hutech.furniturestore.dtos.response.user.UserLoginResponse;
 import com.hutech.furniturestore.dtos.response.user.VerifyTokenResponse;
-import com.hutech.furniturestore.models.User;
 import com.hutech.furniturestore.repositories.UserRepository;
 import com.hutech.furniturestore.sevices.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
-import io.jsonwebtoken.Jwt;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 @RestController
 @RequestMapping("/auth")

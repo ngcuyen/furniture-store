@@ -25,4 +25,8 @@ public class Cart extends BaseEntity{
 
     @OneToMany(mappedBy = "cart")
     private List<CartItem> cartItems;
+    public Cart(User user, List<CartItem> cartItems) {
+        this.user = user;
+        this.cartItems = cartItems;
+    }
 }

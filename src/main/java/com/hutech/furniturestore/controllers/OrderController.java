@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -79,21 +80,27 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-    // Endpoint để nhận kết quả từ VNPay sau thanh toán
-    @PostMapping("/payment/result")
-    public ResponseEntity<String> receivePaymentResult(@RequestParam Map<String, String> callbackParams) {
-        if (vnPayService.isValidCallback(callbackParams)) {
-            Long orderId = Long.valueOf(callbackParams.get("orderId"));
-            boolean paymentSuccessful = "success".equals(callbackParams.get("status"));
-            orderService.processPaymentResult(orderId, paymentSuccessful);
 
-            if (paymentSuccessful) {
-                return ResponseEntity.ok("Payment successful");
-            } else {
-                return ResponseEntity.ok("Payment failed");
-            }
-        } else {
-            return ResponseEntity.ok("Invalid callback");
-        }
+
+    // Endpoint để nhận kết quả từ VNPay sau thanh toán
+    @GetMapping("/payment/result")
+    public ResponseEntity<Map<String, String>> processVNPayCallback(HttpServletRequest request) {
+        int paymentStatus = vnPayService.orderReturn(request);
+
+        String orderInfo = request.getParameter("vnp_OrderInfo");
+        String paymentTime = request.getParameter("vnp_PayDate");
+        String transactionId = request.getParameter("vnp_TransactionNo");
+        String totalPrice = request.getParameter("vnp_Amount");
+
+        Map<String, String> responseData = new HashMap<>();
+        responseData.put("orderId", orderInfo);
+        responseData.put("totalPrice", totalPrice);
+        responseData.put("paymentTime", paymentTime);
+        responseData.put("transactionId", transactionId);
+
+        // Kiểm tra và trả về mã HTTP phù hợp dựa trên trạng thái thanh toán
+        HttpStatus status = (paymentStatus == 1) ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+
+        return new ResponseEntity<>(responseData, status);
     }
 }

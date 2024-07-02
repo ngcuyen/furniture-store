@@ -171,4 +171,21 @@ public class OrderService {
 
         return paginatedResponse;
     }
+
+    public PaginationResponse<OrderResponse> getAllOrdersPaginationAdmin(int page, int size, String sortBy, String sortOrder) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.fromString(sortOrder), sortBy));
+        Page<Order> orderPage = orderRepository.findAll(pageable);
+        List<OrderResponse> orderResponses = orderPage.getContent().stream()
+                .map(this::convertToOrderResponse)
+                .collect(Collectors.toList());
+
+        PaginationResponse<OrderResponse> paginatedResponse = new PaginationResponse<>();
+        paginatedResponse.setItems(orderResponses);
+        paginatedResponse.setPage(orderPage.getNumber() + 1);
+        paginatedResponse.setPerPage(orderPage.getSize());
+        paginatedResponse.setTotalPages(orderPage.getTotalPages());
+        paginatedResponse.setTotalItems(orderPage.getTotalElements());
+
+        return paginatedResponse;
+    }
 }

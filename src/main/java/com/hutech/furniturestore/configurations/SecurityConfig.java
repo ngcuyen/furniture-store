@@ -47,6 +47,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, "products/{id}","categories/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_GET).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/admin/orders")
+                        .hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, PRIVATE_ENDPOINTS)
                         .hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/users/{id}","/products/{id}", "categories/{id}")

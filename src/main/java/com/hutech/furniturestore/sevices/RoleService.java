@@ -1,26 +1,13 @@
 package com.hutech.furniturestore.sevices;
 
-import com.hutech.furniturestore.constants.PaginationResponse;
-import com.hutech.furniturestore.constants.RoleResponse;
-import com.hutech.furniturestore.dtos.RoleDto;
-import com.hutech.furniturestore.dtos.role.DeleteRoleDto;
-import com.hutech.furniturestore.exceptions.NoSuchElementFoundException;
 import com.hutech.furniturestore.models.Role;
 import com.hutech.furniturestore.repositories.RoleRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

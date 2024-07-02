@@ -1,7 +1,7 @@
 package com.hutech.furniturestore.controllers;
 
 import com.hutech.furniturestore.constants.ApiResponse;
-import com.hutech.furniturestore.dtos.RoleDto;
+import com.hutech.furniturestore.dtos.request.RoleDto;
 import com.hutech.furniturestore.exceptions.NoSuchElementFoundException;
 import com.hutech.furniturestore.models.Role;
 import com.hutech.furniturestore.sevices.RoleService;

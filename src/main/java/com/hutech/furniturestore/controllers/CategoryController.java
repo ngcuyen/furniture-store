@@ -3,7 +3,7 @@ package com.hutech.furniturestore.controllers;
 import com.hutech.furniturestore.constants.ApiResponse;
 import com.hutech.furniturestore.constants.CategoryResponse;
 import com.hutech.furniturestore.constants.PaginationResponse;
-import com.hutech.furniturestore.dtos.CategoryDto;
+import com.hutech.furniturestore.dtos.request.CategoryDto;
 import com.hutech.furniturestore.exceptions.NoSuchElementFoundException;
 import com.hutech.furniturestore.sevices.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;

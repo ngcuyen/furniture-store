@@ -72,9 +72,11 @@ public class CartService {
 //    public void removeFromCart(Long productId) {
 //        cartItems.removeIf(item -> item.getProduct().getId().equals(productId));
 //    }
-//    public void clearCart() {
-//        cartItems.clear();
-//    }
+    public void clearCart() {
+        cartItems.clear();
+    }
+
+
 
     public PaginationResponse<CartResponse> getAllCartsPagination(int page, int size, String sortBy, String sortOrder) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.fromString(sortOrder), sortBy));

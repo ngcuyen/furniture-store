@@ -3,7 +3,7 @@ package com.hutech.furniturestore.controllers;
 import com.hutech.furniturestore.constants.ApiResponse;
 import com.hutech.furniturestore.constants.PaginationResponse;
 import com.hutech.furniturestore.constants.ProductResponse;
-import com.hutech.furniturestore.dtos.ProductDto;
+import com.hutech.furniturestore.dtos.request.ProductDto;
 import com.hutech.furniturestore.exceptions.NoSuchElementFoundException;
 import com.hutech.furniturestore.sevices.ProductService;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -42,25 +42,20 @@ public class Order extends BaseEntity{
     @Column(name = "order_date")
     private LocalDateTime orderDate;
 
-    @Column(name = "shipping_method")
-    private String shippingMethod;
-
-    @Column(name = "shipping_address")
-    private String shippingAddress;
-
     @Column(name = "shipping_date")
     private Date shippingDate;
 
     @Column(name = "payment_method", length = 100)
     private String paymentMethod;
 
-    // Owned by admin
-    @Column(name = "active")
-    private Boolean active = false;
 
     @Column(name = "is_removed")
     private boolean isRemoved = false;
 
     @OneToMany(mappedBy = "order")
     private List<OrderDetail> orderDetails;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

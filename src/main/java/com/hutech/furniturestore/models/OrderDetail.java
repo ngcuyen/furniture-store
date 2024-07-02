@@ -25,12 +25,9 @@ public class OrderDetail extends BaseEntity{
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @Column(name = "price", nullable = false)
-    private Double price;
-
     @Column(name = "number_of_products", nullable = false)
     private Integer numberOfProducts;
 
-    @Column(name = "total_price", nullable = false)
-    private Double totalPrice;
+    @Column(name = "price", nullable = false)
+    private Double price;
 }

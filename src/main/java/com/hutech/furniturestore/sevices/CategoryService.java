@@ -2,7 +2,7 @@ package com.hutech.furniturestore.sevices;
 
 import com.hutech.furniturestore.constants.CategoryResponse;
 import com.hutech.furniturestore.constants.PaginationResponse;
-import com.hutech.furniturestore.dtos.CategoryDto;
+import com.hutech.furniturestore.dtos.request.CategoryDto;
 import com.hutech.furniturestore.exceptions.NoSuchElementFoundException;
 import com.hutech.furniturestore.models.Category;
 import com.hutech.furniturestore.repositories.CategoryRepository;

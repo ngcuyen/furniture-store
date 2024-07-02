@@ -5,6 +5,7 @@ import com.hutech.furniturestore.constants.CartResponse;
 import com.hutech.furniturestore.constants.PaginationResponse;
 import com.hutech.furniturestore.dtos.request.cart.CartItemDto;
 import com.hutech.furniturestore.models.*;
+import com.hutech.furniturestore.repositories.CartItemRepository;
 import com.hutech.furniturestore.repositories.CartRepository;
 import com.hutech.furniturestore.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,36 +34,37 @@ public class CartService {
     @Autowired
     private CartRepository cartRepository;
     @Autowired
+    private CartItemRepository cartItemRepository;
+    @Autowired
     private SecurityUtil securityUtil;
+    @Transactional
     public CartResponse addToCart(CartItemDto cartItemRequest) {
-       try {
-           Product product = productRepository.findById(cartItemRequest.getProductId())
-                   .orElseThrow(() -> new IllegalArgumentException("Product not found: " + cartItemRequest.getProductId()));
+        Product product = productRepository.findById(cartItemRequest.getProductId())
+                .orElseThrow(() -> new IllegalArgumentException("Product not found: " + cartItemRequest.getProductId()));
 
-           User currentUser = securityUtil.getCurrentUser();
-           Cart cart = cartRepository.findByUserId("cbc3eb6d-adba-4490-90a9-9121d1bf1fc5")
-                   .orElseGet(() -> {
-                       Cart newCart = new Cart(currentUser, new ArrayList<>());
-                       return cartRepository.save(newCart);
-                   });
+        User currentUser = securityUtil.getCurrentUser();
+        Cart cart = cartRepository.findByUserId(currentUser.getId())
+                .orElseGet(() -> {
+                    Cart newCart = new Cart(currentUser);
+                    return cartRepository.save(newCart);
+                });
 
+        CartItem cartItem = cart.getCartItems().stream()
+                .filter(item -> item.getProduct().getId().equals(cartItemRequest.getProductId()))
+                .findFirst()
+                .orElse(null);
 
+        if (cartItem == null) {
+            cartItem = new CartItem(product, cartItemRequest.getQuantity(), cart);
+            cart.getCartItems().add(cartItem);
+        } else {
+            cartItem.setQuantity(cartItem.getQuantity() + cartItemRequest.getQuantity());
+        }
 
-           CartItem cartItem = new CartItem();
-           cartItem.setProduct(product);
-           cartItem.setQuantity(cartItemRequest.getQuantity());
-           cartItem.setCart(cart);
+        cartRepository.save(cart);
+        cartItemRepository.save(cartItem);
 
-           cart.getCartItems().add(cartItem);
-           cartRepository.save(cart);
-
-           return convertToCartResponse(cartItem);
-       }catch (Exception e) {
-           // Log exception for debugging purposes
-           log.info("Error adding product to cart: " + e.getMessage(), e);
-           // Throw a custom exception or handle it appropriately
-           throw new RuntimeException("Failed to add product to cart. Please try again later.");
-       }
+        return convertToCartResponse(cartItem);
     }
 //    public List<CartItem> getCartItems() {
 //        return cartItems;

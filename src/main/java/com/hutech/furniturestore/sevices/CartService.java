@@ -88,8 +88,9 @@ public class CartService {
 
 
     public PaginationResponse<CartResponse> getAllCartsPagination(int page, int size, String sortBy, String sortOrder) {
+        String currentUserId = securityUtil.getCurrentUserId();
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.fromString(sortOrder), sortBy));
-        Page<Cart> cartPage = cartRepository.findAll(pageable);
+        Page<Cart> cartPage = cartRepository.findByUserId(currentUserId, pageable);
         List<CartResponse> cartResponses = cartPage.getContent().stream()
                 .flatMap(cart -> cart.getCartItems().stream().map(this::convertToCartResponse))
                 .collect(Collectors.toList());

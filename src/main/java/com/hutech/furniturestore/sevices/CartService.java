@@ -63,7 +63,17 @@ public class CartService {
         cartRepository.save(cart);
         cartItemRepository.save(cartItem);
 
-        return convertToCartResponse(cartItem);
+        // Tính toán tổng giá tiền của giỏ hàng
+        double totalPrice = cart.getCartItems().stream()
+                .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
+                .sum();
+
+
+        // Tạo đối tượng CartResponse với tổng giá tiền của giỏ hàng
+        CartResponse cartResponse = convertToCartResponse(cartItem);
+        cartResponse.setTotalPrice(totalPrice);
+
+        return cartResponse;
     }
 //    public List<CartItem> getCartItems() {
 //        return cartItems;
@@ -96,13 +106,19 @@ public class CartService {
 
     private CartResponse convertToCartResponse(CartItem cartItem) {
         Product product = cartItem.getProduct();
+        Cart cart = cartItem.getCart();
+
+        // Tính toán tổng giá tiền của giỏ hàng
+        double totalPrice = cart.getCartItems().stream()
+                .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
+                .sum();
         CartResponse response = new CartResponse();
         response.setProductId(product.getId());
         response.setProductName(product.getName());
         response.setProductPrice(product.getPrice());
         response.setQuantity(cartItem.getQuantity());
         response.setThumbnail(product.getThumbnail());
-
+        response.setTotalPrice(totalPrice);
         return response;
     }
 }

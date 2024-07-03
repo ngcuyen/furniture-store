@@ -11,4 +11,5 @@ import lombok.experimental.FieldDefaults;
 public class CartItemDto {
     private Long productId;
     private Integer quantity;
+    private Double price;
 }

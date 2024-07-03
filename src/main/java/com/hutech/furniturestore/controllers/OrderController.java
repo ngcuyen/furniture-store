@@ -38,7 +38,7 @@ public class OrderController {
 
         // Thông tin đơn hàng
         String orderInfo = "Thông tin đơn hàng";
-        String urlReturn = "http://localhost:8080/";
+        String urlReturn = "http://localhost:3000/";
 
         // Tạo URL thanh toán VNPay
         String paymentUrl = vnPayService.createOrderVNPay((int) (totalAmount*100), orderInfo, urlReturn);
